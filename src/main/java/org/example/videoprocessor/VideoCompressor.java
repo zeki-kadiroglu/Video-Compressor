@@ -34,13 +34,16 @@ public class VideoCompressor {
         FFmpegFrameRecorder recorder = new FFmpegFrameRecorder(outputVideoFile,
                 grabber.getImageWidth(), grabber.getImageHeight(), grabber.getAudioChannels());
         recorder.setFrameRate(grabber.getFrameRate()); // Use the same frame rate as the input
-        recorder.setVideoBitrate(320*240*125);
-        recorder.setFormat("mp4");
+        recorder.setVideoQuality(0);
+        recorder.setVideoBitrate(40 * 40 * 512);
         recorder.setFormat(grabber.getFormat());
         recorder.setPixelFormat(AV_PIX_FMT_YUV420P);
         recorder.setFrameRate(grabber.getFrameRate());
         recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
-        recorder.setVideoOption("presets", "medium");
+        recorder.setVideoOption("preset", "ultrafast");
+        recorder.setVideoOption("tune", "film");
+        recorder.setVideoOption("lossless", "5");
+
         recorder.setVideoCodecName("libx264");
         recorder.start();
 

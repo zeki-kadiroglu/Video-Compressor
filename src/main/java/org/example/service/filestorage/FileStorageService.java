@@ -22,7 +22,7 @@ public class FileStorageService {
 
     @Autowired
     public FileStorageService(FileStorageProperties fileStorageProperties) {
-
+        fileStorageProperties.setUploadDir("/Users/zekikadiroglu/personel-projects/video_compressor/uploads");
         this.fileStorageLocation = Paths.get(fileStorageProperties.getUploadDir())
                 .toAbsolutePath().normalize();
 

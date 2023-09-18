@@ -1,5 +1,8 @@
 package org.example.controller;
 
+import org.bytedeco.javacv.FFmpegFrameGrabber;
+import org.bytedeco.javacv.FFmpegFrameRecorder;
+import org.example.service.videoprocessor.VideoCompressorService;
 import org.springframework.core.io.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.example.payload.UploadFileResponse;
@@ -45,6 +48,14 @@ public class FileController {
                 .collect(Collectors.toList());
     }
 
+    @GetMapping("/compressFile{fileName:.+}")
+    public void compressFile(@PathVariable String fileName ) throws FFmpegFrameRecorder.Exception, FFmpegFrameGrabber.Exception {
+
+        VideoCompressorService videoCompressorService = new VideoCompressorService();
+        videoCompressorService.compressVideo(fileName);
+
+    }
+
     @GetMapping("/downloadFile/{fileName:.+}")
     public ResponseEntity<Resource> downloadFile(@PathVariable String fileName, HttpServletRequest request) {
         // Load file as Resource
@@ -68,5 +79,7 @@ public class FileController {
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
                 .body(resource);
     }
+
+
 
 }

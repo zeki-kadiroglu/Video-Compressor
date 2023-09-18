@@ -7,9 +7,6 @@ import org.bytedeco.ffmpeg.global.avcodec;
 import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.*;
 import org.springframework.stereotype.Service;
-
-import java.io.ByteArrayOutputStream;
-
 import static org.bytedeco.ffmpeg.global.avutil.AV_PIX_FMT_YUV420P;
 
 @Service
@@ -20,7 +17,7 @@ public class VideoCompressorService {
         FFmpegLogCallback.set();
 
         // Output video file
-        String outputVideoFile = "./outzk.mp4";
+        String outputVideoFile = videoPath;
 
 
         // Open the input video file

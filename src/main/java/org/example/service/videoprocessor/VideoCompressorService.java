@@ -4,7 +4,6 @@ package org.example.service.videoprocessor;
 import org.bytedeco.ffmpeg.global.avcodec;
 
 
-import org.bytedeco.ffmpeg.global.avutil;
 import org.bytedeco.javacv.*;
 import org.springframework.stereotype.Service;
 import static org.bytedeco.ffmpeg.global.avutil.AV_PIX_FMT_YUV420P;
@@ -12,7 +11,7 @@ import static org.bytedeco.ffmpeg.global.avutil.AV_PIX_FMT_YUV420P;
 @Service
 public class VideoCompressorService {
 
-    public static void compressVideo(String videoPath) throws FFmpegFrameRecorder.Exception, FFmpegFrameGrabber.Exception {
+    public static String compressVideo(String videoPath) throws FFmpegFrameRecorder.Exception, FFmpegFrameGrabber.Exception {
 
         FFmpegLogCallback.set();
 
@@ -34,11 +33,13 @@ public class VideoCompressorService {
         recorder.setPixelFormat(AV_PIX_FMT_YUV420P);
         recorder.setFrameRate(grabber.getFrameRate());
         recorder.setVideoCodec(avcodec.AV_CODEC_ID_H264);
-        recorder.setVideoOption("preset", "ultrafast");
+
+        recorder.setVideoOption("preset", "medium");
         recorder.setVideoOption("tune", "film");
         recorder.setVideoOption("lossless", "5");
 
         recorder.setVideoCodecName("libx264");
+
         recorder.start();
 
 
@@ -57,6 +58,7 @@ public class VideoCompressorService {
         } catch (FrameGrabber.Exception | FrameRecorder.Exception e) {
             e.printStackTrace();
         }
+    return outputVideoFile;
     }
 }
 

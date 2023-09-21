@@ -1,7 +1,5 @@
 package org.example.controller;
 
-import org.bytedeco.javacv.FFmpegFrameGrabber;
-import org.bytedeco.javacv.FFmpegFrameRecorder;
 import org.example.service.videoprocessor.VideoCompressorService;
 import org.springframework.core.io.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
+import java.nio.channels.FileChannel;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,10 +27,13 @@ import java.util.stream.Collectors;
 public class FileController {
     private static final Logger logger = LoggerFactory.getLogger(FileController.class);
 
+
+
     @Autowired
     private FileStorageService fileStorageService;
     @PostMapping("/uploadFile")
     public UploadFileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+
         String fileName = fileStorageService.storeFile(file);
 
         String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
@@ -48,11 +52,21 @@ public class FileController {
                 .collect(Collectors.toList());
     }
 
-    @GetMapping("/compressFile{fileName:.+}")
-    public void compressFile(@PathVariable String fileName ) throws FFmpegFrameRecorder.Exception, FFmpegFrameGrabber.Exception {
+    @GetMapping("/compressFile/{fileName:.+}")
+    public long compressFile(@PathVariable String fileName ) throws IOException {
+
+        Resource resource = fileStorageService.loadFileAsResource(fileName);
+        String videoFilePath = resource.getFile().getAbsolutePath();
 
         VideoCompressorService videoCompressorService = new VideoCompressorService();
-        videoCompressorService.compressVideo(fileName);
+
+        String outVideoFile = videoCompressorService.compressVideo(videoFilePath);
+
+
+        FileChannel videoFileChannel = FileChannel.open(Path.of(outVideoFile));
+
+        long videoFileSize = videoFileChannel.size();
+        return videoFileSize;
 
     }
 
